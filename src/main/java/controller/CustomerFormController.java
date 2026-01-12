@@ -7,15 +7,20 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import model.Customer;
 import model.CustomerTM;
+import db.DBConnection;
 
 import java.net.URL;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class CustomerFormController implements Initializable {
@@ -76,6 +81,45 @@ public class CustomerFormController implements Initializable {
 
     @FXML
     void btnAddCustomerOnAction(ActionEvent event) {
+        String id = txtId.getText();
+        String name = txtName.getText();
+        String title = cmbTitle.getValue().toString();
+        LocalDate dobValue = dateDob.getValue();
+        Double salary = Double.parseDouble(txtSalary.getText());
+        String address = txtAddress.getText();
+        String city = txtCity.getText();
+        String province = txtProvince.getText();
+        String postalCode = txtPostalCode.getText();
+
+        Customer customer = new Customer(id,name,title,dobValue,salary,address,city,province,postalCode);
+
+        System.out.println(customer);
+
+        try {
+            Connection connection = DBConnection.getInstance().getConnection();
+            PreparedStatement psTm = connection.prepareStatement("INSERT INTO customer VALUES (?,?,?,?,?,?,?,?,?)");
+
+            psTm.setString(1, customer.getId());
+            psTm.setString(2, customer.getTitle());
+            psTm.setString(3, customer.getName());
+            psTm.setObject(4,customer.getDobValue());
+            psTm.setDouble(5,customer.getSalary());
+            psTm.setString(6, customer.getAddress());
+            psTm.setString(7, customer.getCity());
+            psTm.setString(8, customer.getProvince());
+            psTm.setString(9,customer.getPostalCode());
+
+            if(psTm.executeUpdate()>0){
+                new Alert(Alert.AlertType.INFORMATION,"Customer Added").show();
+                loadTable();
+            }
+            else{
+                new Alert(Alert.AlertType.ERROR,"Customer Not Added").show();
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
@@ -96,7 +140,7 @@ public class CustomerFormController implements Initializable {
         colPostalCode.setCellValueFactory(new PropertyValueFactory<>("postalCode"));
 
         try {
-            Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/thogakade_db","root","199161500318");
+            Connection connection = DBConnection.getInstance().getConnection();
             System.out.println(connection);
 
             Statement statement = connection.createStatement();
@@ -131,6 +175,123 @@ public class CustomerFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        cmbTitle.setItems(FXCollections.observableArrayList(Arrays.asList("Mr","Miss","Ms")));
+
         loadTable();
+    }
+
+    public void btnDeleteOnAction(ActionEvent actionEvent) {
+        try {
+            Connection connection = DBConnection.getInstance().getConnection();
+
+            PreparedStatement psTm = connection.prepareStatement("DELETE FROM customer WHERE CustID = ?");
+            psTm.setString(1,txtId.getText());
+
+            if(psTm.executeUpdate()>0){
+                new Alert(Alert.AlertType.INFORMATION,"Customer Deleted!").show();
+                loadTable();
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void btnSearchOnAction(ActionEvent actionEvent) {
+        try {
+            Connection connection = DBConnection.getInstance().getConnection();
+            PreparedStatement psTM = connection.prepareStatement("SELECT * FROM customer WHERE CustID= ? ");
+            psTM.setString(1,txtId.getText());
+            ResultSet resultSet = psTM.executeQuery();
+            Boolean isExist = resultSet.next();
+
+            if(isExist){
+                Customer customer = new Customer(
+                        resultSet.getString(1),
+                        resultSet.getString(3),
+                        resultSet.getString(2),
+                        resultSet.getDate(4).toLocalDate(),
+                        resultSet.getDouble(5),
+                        resultSet.getString(6),
+                        resultSet.getString(7),
+                        resultSet.getString(8),
+                        resultSet.getString(9)
+                );
+
+                System.out.println(customer);
+
+                setTextToValues(customer);
+            }
+            else{
+                new Alert(Alert.AlertType.INFORMATION,"No customer found.").show();
+
+                cmbTitle.setValue("");
+                txtName.setText("");
+                dateDob.setValue(null);
+                txtSalary.setText("");
+                txtAddress.setText("");
+                txtCity.setText("");
+                txtProvince.setText("");
+                txtPostalCode.setText("");
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    private void setTextToValues(Customer customer){
+        txtId.setText(customer.getId());
+        cmbTitle.setValue(customer.getTitle());
+        txtName.setText(customer.getName());
+        dateDob.setValue(customer.getDobValue());
+        txtSalary.setText(customer.getSalary().toString());
+        txtAddress.setText(customer.getAddress());
+        txtCity.setText(customer.getCity());
+        txtProvince.setText(customer.getProvince());
+        txtPostalCode.setText(customer.getPostalCode());
+    }
+
+    public void btnUpdateOnAction(ActionEvent actionEvent) {
+
+        String id = txtId.getText();
+        String name = txtName.getText();
+        String title = cmbTitle.getValue().toString();
+        LocalDate dobValue = dateDob.getValue();
+        Double salary = Double.parseDouble(txtSalary.getText());
+        String address = txtAddress.getText();
+        String city = txtCity.getText();
+        String province = txtProvince.getText();
+        String postalCode = txtPostalCode.getText();
+
+        Customer customer = new Customer(id,name,title,dobValue,salary,address,city,province,postalCode);
+
+        try {
+            Connection connection = DBConnection.getInstance().getConnection();
+            PreparedStatement psTm = connection.prepareStatement("UPDATE customer SET CustTitle=?, CustName=?, DOB=?, salary=?, CustAddress=?, City=?, Province=?, PostalCode=? WHERE CustID= ? ");
+            psTm.setString(9, customer.getId());
+            psTm.setString(1, customer.getTitle());
+            psTm.setString(2, customer.getName());
+            psTm.setObject(3, customer.getDobValue());
+            psTm.setDouble(4, customer.getSalary());
+            psTm.setString(5, customer.getAddress());
+            psTm.setString(6, customer.getCity());
+            psTm.setString(7, customer.getProvince());
+            psTm.setString(8, customer.getPostalCode());
+
+            if(psTm.executeUpdate()>0){
+                new Alert(Alert.AlertType.INFORMATION,"Customer Updated").show();
+                loadTable();
+            }
+            else{
+                new Alert(Alert.AlertType.ERROR,"Customer Not Updated").show();
+            }
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

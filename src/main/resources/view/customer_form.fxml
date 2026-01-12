@@ -13,7 +13,6 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="590.0" prefWidth="763.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.CustomerFormController">
    <children>
       <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#0f4475" height="68.0" layoutY="-4.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="763.0" />
@@ -31,12 +30,12 @@
       <JFXTextField fx:id="txtCity" layoutX="260.0" layoutY="263.0" prefHeight="25.0" prefWidth="127.0" promptText="City" />
       <JFXTextField fx:id="txtProvince" layoutX="429.0" layoutY="263.0" prefHeight="25.0" prefWidth="127.0" promptText="Province" />
       <JFXTextField fx:id="txtPostalCode" layoutX="610.0" layoutY="263.0" prefHeight="25.0" prefWidth="127.0" promptText="Postal Code" />
-      <JFXButton layoutX="610.0" layoutY="320.0" onAction="#btnAddCustomerOnAction" prefHeight="25.0" prefWidth="127.0" style="-fx-background-color: #27ae60;" text="Add Customer" textFill="WHITE">
+      <JFXButton layoutX="636.0" layoutY="320.0" onAction="#btnAddCustomerOnAction" prefHeight="25.0" prefWidth="101.0" style="-fx-background-color: #1b264f;" text="Add Customer" textFill="WHITE">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
       </JFXButton>
-      <JFXButton layoutX="469.0" layoutY="320.0" onAction="#btnReloadOnAction" prefHeight="25.0" prefWidth="127.0" style="-fx-background-color: #badc58;" text="Reload" textFill="WHITE">
+      <JFXButton layoutX="545.0" layoutY="320.0" onAction="#btnReloadOnAction" prefHeight="25.0" prefWidth="85.0" style="-fx-background-color: #778da9;" text="Reload" textFill="WHITE">
          <font>
             <Font name="System Bold" size="12.0" />
          </font>
@@ -58,5 +57,20 @@
             <Image url="@../img/img_customer.jpg" />
          </image>
       </ImageView>
+      <JFXButton layoutX="271.0" layoutY="320.0" onAction="#btnDeleteOnAction" prefHeight="25.0" prefWidth="85.0" style="-fx-background-color: #1b264f;" text="Delete" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </JFXButton>
+      <JFXButton layoutX="453.0" layoutY="320.0" onAction="#btnSearchOnAction" prefHeight="25.0" prefWidth="85.0" style="-fx-background-color: #778da9;" text="Search" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </JFXButton>
+      <JFXButton layoutX="362.0" layoutY="320.0" onAction="#btnUpdateOnAction" prefHeight="25.0" prefWidth="85.0" style="-fx-background-color: #778da9;" text="Update" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </JFXButton>
    </children>
 </AnchorPane>
