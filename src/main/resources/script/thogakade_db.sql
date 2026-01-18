@@ -80,6 +80,8 @@ INSERT INTO Customer VALUES('C032','Mr','Jinasoma','1988-3-14',67000,'No. Kandy 
 
 SELECT * FROM Customer;
 
+-- DELETE FROM Customer WHERE CustID = 'C033';
+
 INSERT INTO Item VALUES('P001','Keerisamba Retail','1kg',105.00,3000);
 INSERT INTO Item VALUES('P002','Keerisamba 5Kg ','5kg',525.00,200);
 INSERT INTO Item VALUES('P003','Keerisamba 10Kg','10kg',995.00,36);
