@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="590.0" prefWidth="763.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.DashboardController">
+   <children>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#0f4475" height="598.0" layoutY="-4.0" stroke="BLACK" strokeType="INSIDE" strokeWidth="0.0" width="184.0" />
+      <Label layoutX="35.0" layoutY="41.0" text="Thogakade" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="22.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="72.0" fitWidth="84.0" layoutX="56.0" layoutY="101.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@../img/icon_cart.png" />
+         </image>
+      </ImageView>
+      <JFXButton layoutX="24.0" layoutY="329.0" onAction="#btnItemFormOnAction" prefHeight="25.0" prefWidth="137.0" style="-fx-background-color: #778da9;" text="Item Form" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </JFXButton>
+      <JFXButton layoutX="24.0" layoutY="268.0" onAction="#btnCustomerFormOnAction" prefHeight="30.0" prefWidth="137.0" style="-fx-background-color: #778da9;" text="Customer Form" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </JFXButton>
+      <JFXButton layoutX="24.0" layoutY="385.0" onAction="#btnOrderFormOnAction" prefHeight="25.0" prefWidth="137.0" style="-fx-background-color: #778da9;" text="Order Form" textFill="WHITE">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </JFXButton>
+      <Label layoutX="38.0" layoutY="547.0" text="icet.edu@gmail.com" textFill="WHITE" />
+      <AnchorPane fx:id="dashRoot" layoutX="184.0" prefHeight="590.0" prefWidth="763.0" />
+   </children>
+</AnchorPane>
