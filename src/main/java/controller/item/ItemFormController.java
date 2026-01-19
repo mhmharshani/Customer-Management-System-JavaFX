@@ -1,4 +1,4 @@
-package controller;
+package controller.item;
 
 import com.jfoenix.controls.JFXTextField;
 import db.DBConnection;
@@ -11,13 +11,12 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import model.Customer;
 import model.CustomerTM;
 import model.Item;
+import model.ItemTM;
 
 import java.net.URL;
 import java.sql.*;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -162,6 +161,16 @@ public class ItemFormController implements Initializable {
 
     }
 
+    private void setTextToValues(ItemTM itemTm){
+        if(itemTm!=null){
+            txtCode.setText(itemTm.getCode());
+            txtDescription.setText(itemTm.getDescription());
+            txtSize.setText(itemTm.getSize());
+            txtPrice.setText(itemTm.getPrice().toString());
+            txtQtyOnHand.setText(itemTm.getQtyOnHand().toString());
+        }
+    }
+
     @FXML
     void btnUpdateOnAction(ActionEvent event) {
 
@@ -214,11 +223,11 @@ public class ItemFormController implements Initializable {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM Item");
 
-            ArrayList<Item> itemTMS = new ArrayList<>();
+            ArrayList<ItemTM> itemTMS = new ArrayList<>();
 
             while(resultSet.next()){
                 itemTMS.add(
-                        new Item(
+                        new ItemTM(
                                 resultSet.getString(1),
                                 resultSet.getString(2),
                                 resultSet.getString(3),
@@ -228,7 +237,7 @@ public class ItemFormController implements Initializable {
                 );
 
             }
-            ObservableList<Item> observableList = FXCollections.observableArrayList(itemTMS);
+            ObservableList<ItemTM> observableList = FXCollections.observableArrayList(itemTMS);
 
             tblItem.setItems(observableList);
 
@@ -239,6 +248,16 @@ public class ItemFormController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
         loadTable();
+
+        //Enable select a record from table directly
+        tblItem.getSelectionModel().selectedItemProperty().addListener((observableValue,oldValue,newValue) ->{
+
+            System.out.println(newValue);
+
+            assert newValue !=null;
+            setTextToValues((ItemTM) newValue);
+        });
     }
 }

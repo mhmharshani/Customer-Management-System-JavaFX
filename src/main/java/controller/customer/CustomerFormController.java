@@ -1,4 +1,4 @@
-package controller;
+package controller.customer;
 
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
@@ -18,9 +18,12 @@ import db.DBConnection;
 
 import java.net.URL;
 import java.sql.*;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.ResourceBundle;
 
 public class CustomerFormController implements Initializable {
@@ -141,7 +144,7 @@ public class CustomerFormController implements Initializable {
 
         try {
             Connection connection = DBConnection.getInstance().getConnection();
-            System.out.println(connection);
+            System.out.println("Connection in Load Table : "+connection);
 
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM Customer");
@@ -178,6 +181,16 @@ public class CustomerFormController implements Initializable {
         cmbTitle.setItems(FXCollections.observableArrayList(Arrays.asList("Mr","Miss","Ms")));
 
         loadTable();
+
+        //Enable select a record from table directly
+        tblCustomers.getSelectionModel().selectedItemProperty().addListener((observableValue,oldValue,newValue) ->{
+
+            System.out.println("Select record new value : "+newValue);
+
+            assert newValue !=null;
+            setTextToValues((CustomerTM) newValue);
+        });
+
     }
 
     public void btnDeleteOnAction(ActionEvent actionEvent) {
@@ -237,6 +250,22 @@ public class CustomerFormController implements Initializable {
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        }
+
+    }
+
+    private void setTextToValues(CustomerTM customerTm){
+        if(customerTm !=null){
+            txtId.setText(customerTm.getId());
+            String[] details = customerTm.getName().split(". ");
+            cmbTitle.setValue(details[0]);
+            txtName.setText(details[1]);
+            dateDob.setValue(customerTm.getDob().toLocalDate());
+            txtSalary.setText(customerTm.getSalary().toString());
+            txtAddress.setText(customerTm.getAddress());
+            txtCity.setText(customerTm.getCity());
+            txtProvince.setText(customerTm.getProvince());
+            txtPostalCode.setText(customerTm.getPostalCode());
         }
 
     }
