@@ -18,6 +18,7 @@ import model.ItemTM;
 import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class ItemFormController implements Initializable {
@@ -210,44 +211,30 @@ public class ItemFormController implements Initializable {
 
     public void loadTable(){
 
+        ItemServiceImpl itemService = new ItemServiceImpl();
+        List<Item> all = itemService.getAll();
+
+        ArrayList<ItemTM> itemTMArrayList = new ArrayList<>();
+        all.forEach(item -> {
+            itemTMArrayList.add(new ItemTM(
+                    item.getCode(),
+                    item.getDescription(),
+                    item.getSize(),
+                    item.getPrice(),
+                    item.getQtyOnHand()
+            ));
+        });
+        tblItem.setItems(FXCollections.observableArrayList(itemTMArrayList));
+    }
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
         colCode.setCellValueFactory(new PropertyValueFactory<>("code"));
         colDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
         colSize.setCellValueFactory(new PropertyValueFactory<>("size"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
         colQty.setCellValueFactory(new PropertyValueFactory<>("qtyOnHand"));
-
-        try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            System.out.println(connection);
-
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM Item");
-
-            ArrayList<ItemTM> itemTMS = new ArrayList<>();
-
-            while(resultSet.next()){
-                itemTMS.add(
-                        new ItemTM(
-                                resultSet.getString(1),
-                                resultSet.getString(2),
-                                resultSet.getString(3),
-                                resultSet.getDouble(4),
-                                resultSet.getInt(5)
-                        )
-                );
-
-            }
-            ObservableList<ItemTM> observableList = FXCollections.observableArrayList(itemTMS);
-
-            tblItem.setItems(observableList);
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
 
         loadTable();
 
