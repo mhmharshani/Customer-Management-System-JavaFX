@@ -69,45 +69,26 @@ public class ItemFormController implements Initializable {
 
         System.out.println(item);
 
-        try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            PreparedStatement psTm = connection.prepareStatement("INSERT INTO item VALUES (?,?,?,?,?)");
+        boolean isAdded = new ItemServiceImpl().addItem(item);
 
-            psTm.setString(1, item.getCode());
-            psTm.setString(2, item.getDescription());
-            psTm.setString(3, item.getSize());
-            psTm.setDouble(4, item.getPrice());
-            psTm.setInt(5, item.getQtyOnHand());
-
-            if(psTm.executeUpdate()>0){
-                new Alert(Alert.AlertType.INFORMATION,"Item Added").show();
-                loadTable();
-            }
-            else{
-                new Alert(Alert.AlertType.ERROR,"Item Not Added").show();
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        if(isAdded){
+            new Alert(Alert.AlertType.INFORMATION,"Item Added").show();
+            loadTable();
+        }
+        else{
+            new Alert(Alert.AlertType.ERROR,"Item Not Added").show();
         }
     }
 
     @FXML
     void btnDeleteOnAction(ActionEvent event) {
-        try {
-            Connection connection = DBConnection.getInstance().getConnection();
+        boolean isDeleted = new ItemServiceImpl().deleteItem(txtCode.getText());
 
-            PreparedStatement psTm = connection.prepareStatement("DELETE FROM item WHERE ItemCode = ?");
-            psTm.setString(1,txtCode.getText());
-
-            if(psTm.executeUpdate()>0){
-                new Alert(Alert.AlertType.INFORMATION,"Item Deleted!").show();
-                loadTable();
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        if(isDeleted){
+            new Alert(Alert.AlertType.INFORMATION,"Item Deleted!").show();
+            loadTable();
         }
+
     }
 
     @FXML
@@ -117,49 +98,29 @@ public class ItemFormController implements Initializable {
 
     @FXML
     void btnSearchOnAction(ActionEvent event) {
-        try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            PreparedStatement psTM = connection.prepareStatement("SELECT * FROM item WHERE ItemCode= ? ");
-            psTM.setString(1,txtCode.getText());
-            ResultSet resultSet = psTM.executeQuery();
-            Boolean isExist = resultSet.next();
 
-            if(isExist){
-                Item item = new Item(
-                        resultSet.getString(1),
-                        resultSet.getString(2),
-                        resultSet.getString(3),
-                        resultSet.getDouble(4),
-                        resultSet.getInt(5)
-                );
-
-                System.out.println(item);
-
-                setTextToValues(item);
-            }
-            else{
-                new Alert(Alert.AlertType.INFORMATION,"No item found.").show();
-
-                txtCode.setText("");
-                txtDescription.setText("");
-                txtSize.setText("");
-                txtPrice.setText("");
-                txtQtyOnHand.setText("");
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        Item item = new ItemServiceImpl().searchById(txtCode.getText());
+        if(item!=null){
+            setTextToValues(item);
         }
+        else{
+            new Alert(Alert.AlertType.INFORMATION,"No item found.").show();
+
+            txtCode.setText("");
+            txtDescription.setText("");
+            txtSize.setText("");
+            txtPrice.setText("");
+            txtQtyOnHand.setText("");
+        }
+
     }
 
     private void setTextToValues(Item item){
-
         txtCode.setText(item.getCode());
         txtDescription.setText(item.getDescription());
         txtSize.setText(item.getSize());
         txtPrice.setText(item.getPrice().toString());
         txtQtyOnHand.setText(item.getQtyOnHand().toString());
-
     }
 
     private void setTextToValues(ItemTM itemTm){
@@ -185,27 +146,14 @@ public class ItemFormController implements Initializable {
 
         System.out.println(item);
 
-        try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            PreparedStatement psTm = connection.prepareStatement("UPDATE item SET Description=?, PackSize=?, UnitPrice=?, QtyOnHand=? WHERE ItemCode= ? ");
+        boolean isUpdated = new ItemServiceImpl().updateItem(item);
 
-            psTm.setString(5, item.getCode());
-            psTm.setString(1, item.getDescription());
-            psTm.setString(2, item.getSize());
-            psTm.setDouble(3, item.getPrice());
-            psTm.setInt(4, item.getQtyOnHand());
-
-            if(psTm.executeUpdate()>0){
-                new Alert(Alert.AlertType.INFORMATION,"Item Updated").show();
-                loadTable();
-            }
-            else{
-                new Alert(Alert.AlertType.ERROR,"Item Not Updated").show();
-            }
-
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+        if(isUpdated){
+            new Alert(Alert.AlertType.INFORMATION,"Item Updated").show();
+            loadTable();
+        }
+        else{
+            new Alert(Alert.AlertType.ERROR,"Item Not Updated").show();
         }
     }
 
