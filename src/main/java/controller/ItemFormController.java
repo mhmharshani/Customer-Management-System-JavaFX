@@ -1,9 +1,7 @@
-package controller.item;
+package controller;
 
 import com.jfoenix.controls.JFXTextField;
-import db.DBConnection;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -11,12 +9,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
-import model.CustomerTM;
 import model.Item;
 import model.ItemTM;
+import service.ServiceFactory;
+import service.custom.ItemService;
+import util.ServiceType;
 
 import java.net.URL;
-import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -56,6 +55,8 @@ public class ItemFormController implements Initializable {
     @FXML
     private JFXTextField txtSize;
 
+    ItemService serviceType = ServiceFactory.getInstance().getServiceType(ServiceType.ITEM);
+
     @FXML
     void btnAddItemOnAction(ActionEvent event) {
 
@@ -69,7 +70,7 @@ public class ItemFormController implements Initializable {
 
         System.out.println(item);
 
-        boolean isAdded = new ItemServiceImpl().addItem(item);
+        boolean isAdded = serviceType.addItem(item);
 
         if(isAdded){
             new Alert(Alert.AlertType.INFORMATION,"Item Added").show();
@@ -82,7 +83,7 @@ public class ItemFormController implements Initializable {
 
     @FXML
     void btnDeleteOnAction(ActionEvent event) {
-        boolean isDeleted = new ItemServiceImpl().deleteItem(txtCode.getText());
+        boolean isDeleted = serviceType.deleteItem(txtCode.getText());
 
         if(isDeleted){
             new Alert(Alert.AlertType.INFORMATION,"Item Deleted!").show();
@@ -99,7 +100,7 @@ public class ItemFormController implements Initializable {
     @FXML
     void btnSearchOnAction(ActionEvent event) {
 
-        Item item = new ItemServiceImpl().searchById(txtCode.getText());
+        Item item = serviceType.searchById(txtCode.getText());
         if(item!=null){
             setTextToValues(item);
         }
@@ -146,7 +147,7 @@ public class ItemFormController implements Initializable {
 
         System.out.println(item);
 
-        boolean isUpdated = new ItemServiceImpl().updateItem(item);
+        boolean isUpdated = serviceType.updateItem(item);
 
         if(isUpdated){
             new Alert(Alert.AlertType.INFORMATION,"Item Updated").show();
@@ -159,8 +160,7 @@ public class ItemFormController implements Initializable {
 
     public void loadTable(){
 
-        ItemServiceImpl itemService = new ItemServiceImpl();
-        List<Item> all = itemService.getAll();
+        List<Item> all = serviceType.getAll();
 
         ArrayList<ItemTM> itemTMArrayList = new ArrayList<>();
         all.forEach(item -> {

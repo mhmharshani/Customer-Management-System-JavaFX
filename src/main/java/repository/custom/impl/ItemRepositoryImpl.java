@@ -1,21 +1,16 @@
-package controller.item;
+package repository.custom.impl;
 
 import db.DBConnection;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.Alert;
 import model.Item;
-import model.ItemTM;
+import repository.custom.ItemRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemServiceImpl implements ItemService {
-
-
+public class ItemRepositoryImpl implements ItemRepository {
     @Override
-    public boolean addItem(Item item) {
+    public boolean create(Item item) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement psTm = connection.prepareStatement("INSERT INTO item VALUES (?,?,?,?,?)");
@@ -34,7 +29,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public boolean updateItem(Item item) {
+    public boolean update(Item item) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement psTm = connection.prepareStatement("UPDATE item SET Description=?, PackSize=?, UnitPrice=?, QtyOnHand=? WHERE ItemCode= ? ");
@@ -53,7 +48,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public boolean deleteItem(String id) {
+    public boolean deleteById(String id) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
 
@@ -68,7 +63,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public Item searchById(String id) {
+    public Item getById(String id) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement psTM = connection.prepareStatement("SELECT * FROM item WHERE ItemCode= ? ");

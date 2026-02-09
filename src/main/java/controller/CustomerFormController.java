@@ -1,8 +1,7 @@
-package controller.customer;
+package controller;
 
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXTextField;
-import controller.item.ItemServiceImpl;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -15,16 +14,13 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Customer;
 import model.CustomerTM;
-import db.DBConnection;
-import model.Item;
-import model.ItemTM;
+import service.ServiceFactory;
+import service.custom.CustomerService;
+import util.ServiceType;
 
 import java.net.URL;
-import java.sql.*;
 import java.sql.Date;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 
 public class CustomerFormController implements Initializable {
@@ -83,6 +79,8 @@ public class CustomerFormController implements Initializable {
     @FXML
     private JFXTextField txtSalary;
 
+    CustomerService serviceType = ServiceFactory.getInstance().getServiceType(ServiceType.CUSTOMER);
+
     @FXML
     void btnAddCustomerOnAction(ActionEvent event) {
         String id = txtId.getText();
@@ -99,7 +97,7 @@ public class CustomerFormController implements Initializable {
 
         System.out.println(customer);
 
-        Boolean isAdded = new CustomerServiceImpl().addCustomer(customer);
+        Boolean isAdded = serviceType.addCustomer(customer);
 
         if(isAdded){
             new Alert(Alert.AlertType.INFORMATION,"Customer Added").show();
@@ -117,8 +115,7 @@ public class CustomerFormController implements Initializable {
 
     public void loadTable(){
 
-        CustomerServiceImpl customerService = new CustomerServiceImpl();
-        List<Customer> all = customerService.getAll();
+        List<Customer> all = serviceType.getAll();
 
         ArrayList<CustomerTM> customerTMArrayList = new ArrayList<>();
         all.forEach(customer -> {
@@ -141,7 +138,7 @@ public class CustomerFormController implements Initializable {
 
     public void btnDeleteOnAction(ActionEvent actionEvent) {
 
-        Boolean isDeleted = new CustomerServiceImpl().deleteCustomer(txtId.getText());
+        Boolean isDeleted = serviceType.deleteCustomer(txtId.getText());
 
         if(isDeleted){
             new Alert(Alert.AlertType.INFORMATION,"Customer Deleted!").show();
@@ -153,7 +150,7 @@ public class CustomerFormController implements Initializable {
 
     public void btnSearchOnAction(ActionEvent actionEvent) {
 
-        Customer customer = new CustomerServiceImpl().searchCustomerById(txtId.getText());
+        Customer customer = serviceType.searchCustomerById(txtId.getText());
         if(customer !=null){
             setTextToValues(customer);
         }
@@ -214,7 +211,7 @@ public class CustomerFormController implements Initializable {
 
         Customer customer = new Customer(id,name,title,dobValue,salary,address,city,province,postalCode);
 
-        Boolean isUpdated = new CustomerServiceImpl().updateCustomer(customer);
+        Boolean isUpdated = serviceType.updateCustomer(customer);
 
         if(isUpdated){
             new Alert(Alert.AlertType.INFORMATION,"Customer Updated").show();

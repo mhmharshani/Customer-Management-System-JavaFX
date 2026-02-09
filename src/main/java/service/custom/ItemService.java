@@ -1,9 +1,11 @@
-package controller.item;
+package service.custom;
 
 import model.Item;
+import service.SuperService;
+
 import java.util.List;
 
-public interface ItemService {
+public interface ItemService extends SuperService {
 
     boolean addItem(Item item);
 
@@ -14,5 +16,4 @@ public interface ItemService {
     Item searchById(String id);
 
     List<Item> getAll();
-
 }

@@ -1,21 +1,16 @@
-package controller.customer;
+package repository.custom.impl;
 
 import db.DBConnection;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.Alert;
 import model.Customer;
-import model.CustomerTM;
+import repository.custom.CustomerRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomerServiceImpl implements CustomerService{
-
-
+public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
-    public boolean addCustomer(Customer customer) {
+    public boolean create(Customer customer) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement psTm = connection.prepareStatement("INSERT INTO customer VALUES (?,?,?,?,?,?,?,?,?)");
@@ -39,7 +34,7 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public boolean updateCustomer(Customer customer) {
+    public boolean update(Customer customer) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement psTm = connection.prepareStatement("UPDATE customer SET CustTitle=?, CustName=?, DOB=?, salary=?, CustAddress=?, City=?, Province=?, PostalCode=? WHERE CustID= ? ");
@@ -61,7 +56,7 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public boolean deleteCustomer(String id) {
+    public boolean deleteById(String id) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
 
@@ -76,7 +71,7 @@ public class CustomerServiceImpl implements CustomerService{
     }
 
     @Override
-    public Customer searchCustomerById(String id) {
+    public Customer getById(String id) {
         try {
             Connection connection = DBConnection.getInstance().getConnection();
             PreparedStatement psTM = connection.prepareStatement("SELECT * FROM customer WHERE CustID= ? ");

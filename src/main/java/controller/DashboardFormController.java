@@ -9,7 +9,7 @@ import javafx.scene.layout.AnchorPane;
 import java.io.IOException;
 import java.net.URL;
 
-public class DashboardController {
+public class DashboardFormController {
 
     @FXML
     private AnchorPane dashRoot;
