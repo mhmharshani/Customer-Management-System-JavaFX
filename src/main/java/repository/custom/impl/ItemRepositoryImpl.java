@@ -3,6 +3,7 @@ package repository.custom.impl;
 import db.DBConnection;
 import model.Item;
 import repository.custom.ItemRepository;
+import util.CrudUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,16 +13,14 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public boolean create(Item item) {
         try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            PreparedStatement psTm = connection.prepareStatement("INSERT INTO item VALUES (?,?,?,?,?)");
 
-            psTm.setString(1, item.getCode());
-            psTm.setString(2, item.getDescription());
-            psTm.setString(3, item.getSize());
-            psTm.setDouble(4, item.getPrice());
-            psTm.setInt(5, item.getQtyOnHand());
-
-            return psTm.executeUpdate()>0;
+            return CrudUtil.execute("INSERT INTO item VALUES (?,?,?,?,?)",
+                    item.getCode(),
+                    item.getDescription(),
+                    item.getSize(),
+                    item.getPrice(),
+                    item.getQtyOnHand()
+                    );
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -31,16 +30,14 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public boolean update(Item item) {
         try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            PreparedStatement psTm = connection.prepareStatement("UPDATE item SET Description=?, PackSize=?, UnitPrice=?, QtyOnHand=? WHERE ItemCode= ? ");
 
-            psTm.setString(5, item.getCode());
-            psTm.setString(1, item.getDescription());
-            psTm.setString(2, item.getSize());
-            psTm.setDouble(3, item.getPrice());
-            psTm.setInt(4, item.getQtyOnHand());
-
-            return psTm.executeUpdate()>0;
+            return CrudUtil.execute("UPDATE item SET Description=?, PackSize=?, UnitPrice=?, QtyOnHand=? WHERE ItemCode= ? ",
+                    item.getDescription(),
+                    item.getSize(),
+                    item.getPrice(),
+                    item.getQtyOnHand(),
+                    item.getCode()
+                    );
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -50,12 +47,8 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public boolean deleteById(String id) {
         try {
-            Connection connection = DBConnection.getInstance().getConnection();
 
-            PreparedStatement psTm = connection.prepareStatement("DELETE FROM item WHERE ItemCode = ?");
-            psTm.setString(1,id);
-
-            return psTm.executeUpdate()>0;
+            return CrudUtil.execute("DELETE FROM item WHERE ItemCode = ?",id);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -65,10 +58,8 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public Item getById(String id) {
         try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            PreparedStatement psTM = connection.prepareStatement("SELECT * FROM item WHERE ItemCode= ? ");
-            psTM.setString(1,id);
-            ResultSet resultSet = psTM.executeQuery();
+
+            ResultSet resultSet = CrudUtil.execute("SELECT * FROM item WHERE ItemCode= ? ",id);
             Boolean isExist = resultSet.next();
 
             if(isExist) {
@@ -94,11 +85,8 @@ public class ItemRepositoryImpl implements ItemRepository {
     @Override
     public List<Item> getAll() {
         try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            System.out.println(connection);
 
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM Item");
+            ResultSet resultSet = CrudUtil.execute("SELECT * FROM Item");
 
             ArrayList<Item> itemList = new ArrayList<>();
 

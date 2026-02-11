@@ -3,6 +3,7 @@ package repository.custom.impl;
 import db.DBConnection;
 import model.Customer;
 import repository.custom.CustomerRepository;
+import util.CrudUtil;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,20 +13,18 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
     public boolean create(Customer customer) {
         try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            PreparedStatement psTm = connection.prepareStatement("INSERT INTO customer VALUES (?,?,?,?,?,?,?,?,?)");
 
-            psTm.setString(1, customer.getId());
-            psTm.setString(2, customer.getTitle());
-            psTm.setString(3, customer.getName());
-            psTm.setObject(4,customer.getDobValue());
-            psTm.setDouble(5,customer.getSalary());
-            psTm.setString(6, customer.getAddress());
-            psTm.setString(7, customer.getCity());
-            psTm.setString(8, customer.getProvince());
-            psTm.setString(9,customer.getPostalCode());
-
-            return (psTm.executeUpdate()>0);
+            return CrudUtil.execute("INSERT INTO customer VALUES (?,?,?,?,?,?,?,?,?)",
+                customer.getId(),
+                customer.getTitle(),
+                customer.getName(),
+                customer.getDobValue(),
+                customer.getSalary(),
+                customer.getAddress(),
+                customer.getCity(),
+                customer.getProvince(),
+                customer.getPostalCode()
+                );
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -36,19 +35,18 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
     public boolean update(Customer customer) {
         try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            PreparedStatement psTm = connection.prepareStatement("UPDATE customer SET CustTitle=?, CustName=?, DOB=?, salary=?, CustAddress=?, City=?, Province=?, PostalCode=? WHERE CustID= ? ");
-            psTm.setString(9, customer.getId());
-            psTm.setString(1, customer.getTitle());
-            psTm.setString(2, customer.getName());
-            psTm.setObject(3, customer.getDobValue());
-            psTm.setDouble(4, customer.getSalary());
-            psTm.setString(5, customer.getAddress());
-            psTm.setString(6, customer.getCity());
-            psTm.setString(7, customer.getProvince());
-            psTm.setString(8, customer.getPostalCode());
 
-            return psTm.executeUpdate()>0;
+            return CrudUtil.execute("UPDATE customer SET CustTitle=?, CustName=?, DOB=?, salary=?, CustAddress=?, City=?, Province=?, PostalCode=? WHERE CustID= ? ",
+                    customer.getTitle(),
+                    customer.getName(),
+                    customer.getDobValue(),
+                    customer.getSalary(),
+                    customer.getAddress(),
+                    customer.getCity(),
+                    customer.getProvince(),
+                    customer.getPostalCode(),
+                    customer.getId()
+            );
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -58,12 +56,8 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
     public boolean deleteById(String id) {
         try {
-            Connection connection = DBConnection.getInstance().getConnection();
 
-            PreparedStatement psTm = connection.prepareStatement("DELETE FROM customer WHERE CustID = ?");
-            psTm.setString(1,id);
-
-            return (psTm.executeUpdate()>0);
+            return CrudUtil.execute("DELETE FROM customer WHERE CustID = ?",id);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -73,10 +67,7 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
     public Customer getById(String id) {
         try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            PreparedStatement psTM = connection.prepareStatement("SELECT * FROM customer WHERE CustID= ? ");
-            psTM.setString(1,id);
-            ResultSet resultSet = psTM.executeQuery();
+            ResultSet resultSet = CrudUtil.execute("SELECT * FROM customer WHERE CustID= ? ",id);
             Boolean isExist = resultSet.next();
 
             if(isExist){
@@ -106,12 +97,8 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
     public List<Customer> getAll() {
         try {
-            Connection connection = DBConnection.getInstance().getConnection();
-            System.out.println("Connection in Load Table : "+connection);
 
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM Customer");
-
+            ResultSet resultSet = CrudUtil.execute("SELECT * FROM Customer");
             ArrayList<Customer> customerList = new ArrayList<>();
 
             while(resultSet.next()){
