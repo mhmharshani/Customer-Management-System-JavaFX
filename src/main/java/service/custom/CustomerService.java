@@ -16,4 +16,6 @@ public interface CustomerService extends SuperService {
     Customer searchCustomerById(String id);
 
     List<Customer> getAll();
+
+    List<String> getAllCustomerIDs();
 }

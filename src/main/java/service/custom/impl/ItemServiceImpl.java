@@ -40,4 +40,14 @@ public class ItemServiceImpl implements ItemService {
     public List<Item> getAll() {
         return repositoryType.getAll();
     }
+
+    @Override
+    public Item getItemByCode(String code) {
+        return repositoryType.getById(code);
+    }
+
+    @Override
+    public List<String> getItemCodes() {
+        return repositoryType.getItemCodes();
+    }
 }

@@ -13,7 +13,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Customer;
-import model.CustomerTM;
+import model.tm.CustomerTM;
 import service.ServiceFactory;
 import service.custom.CustomerService;
 import util.ServiceType;

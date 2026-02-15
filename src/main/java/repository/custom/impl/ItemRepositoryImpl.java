@@ -108,4 +108,15 @@ public class ItemRepositoryImpl implements ItemRepository {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public List<String> getItemCodes() {
+        ArrayList<String> itemCodeList = new ArrayList<>();
+
+        List<Item> all = getAll();
+
+        all.forEach(item -> itemCodeList.add(item.getCode()));
+
+        return itemCodeList;
+    }
 }

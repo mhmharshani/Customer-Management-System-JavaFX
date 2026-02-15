@@ -16,4 +16,8 @@ public interface ItemService extends SuperService {
     Item searchById(String id);
 
     List<Item> getAll();
+
+    Item getItemByCode(String code);
+
+    List<String> getItemCodes();
 }

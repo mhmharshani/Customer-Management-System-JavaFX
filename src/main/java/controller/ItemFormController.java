@@ -10,7 +10,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Item;
-import model.ItemTM;
+import model.tm.ItemTM;
 import service.ServiceFactory;
 import service.custom.ItemService;
 import util.ServiceType;

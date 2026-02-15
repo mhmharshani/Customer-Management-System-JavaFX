@@ -1,20 +1,19 @@
-package model;
+package model.tm;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import java.util.Date;
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Order {
+public class CartTM {
+    private String code;
     private String orderId;
-    private Date orderDate;
-    private String customerId;
-    private List<OrderDetails> orderDetailsList;
+    private String description;
+    private Double unitPrice;
+    private Integer qtyOnHand;
+    private Double total;
 }

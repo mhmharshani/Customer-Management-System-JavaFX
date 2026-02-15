@@ -6,7 +6,7 @@ import service.custom.impl.OrderServiceImpl;
 import util.ServiceType;
 
 //Factory Design Pattern
-//Singleton Design Pattern
+//Singleton Design Pattern used for Factory as there is one factory
 public class ServiceFactory {
     private static ServiceFactory instance;
 

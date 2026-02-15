@@ -40,4 +40,15 @@ public class CustomerServiceImpl implements CustomerService {
     public List<Customer> getAll() {
         return repositoryType.getAll();
     }
+
+    @Override
+    public List<String> getAllCustomerIDs() {
+        List<Customer> all = getAll();
+        ArrayList<String> idList = new ArrayList<>();
+
+        for(Customer customer: all){
+            idList.add(customer.getId());
+        }
+        return idList;
+    }
 }
