@@ -14,7 +14,8 @@ public class CustomerRepositoryImpl implements CustomerRepository {
     public boolean create(Customer customer) throws SQLException {
             return CrudUtil.execute("INSERT INTO customer VALUES (?,?,?,?,?,?,?,?,?)",
                 customer.getId(),
-                customer.getTitle(),
+//                customer.getTitle(),
+                null,
                 customer.getName(),
                 customer.getDobValue(),
                 customer.getSalary(),

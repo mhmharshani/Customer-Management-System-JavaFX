@@ -46,7 +46,7 @@
             <Font name="System Bold" size="12.0" />
          </font></Button>
       <TextField fx:id="txtQtyOnHand" layoutX="524.0" layoutY="243.0" prefHeight="25.0" prefWidth="128.0" promptText="Enter qty on hand" />
-      <Button layoutX="661.0" layoutY="518.0" mnemonicParsing="false" style="-fx-background-color: #778da9;" text="Place Order" textFill="WHITE">
+      <Button layoutX="661.0" layoutY="518.0" mnemonicParsing="false" onAction="#btnPlaceOrderOnAction" style="-fx-background-color: #778da9;" text="Place Order" textFill="WHITE">
          <font>
             <Font name="System Bold" size="12.0" />
          </font></Button>

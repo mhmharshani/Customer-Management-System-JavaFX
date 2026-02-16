@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -14,7 +15,7 @@ import java.util.List;
 @ToString
 public class Order {
     private String orderId;
-    private Date orderDate;
+    private LocalDate orderDate;
     private String customerId;
     private List<OrderDetails> orderDetailsList;
 }

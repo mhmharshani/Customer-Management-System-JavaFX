@@ -14,6 +14,6 @@ public class CartTM {
     private String orderId;
     private String description;
     private Double unitPrice;
-    private Integer qtyOnHand;
+    private Integer qty;
     private Double total;
 }

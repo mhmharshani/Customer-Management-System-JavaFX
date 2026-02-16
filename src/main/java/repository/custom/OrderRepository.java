@@ -2,6 +2,10 @@ package repository.custom;
 
 import model.Order;
 import repository.CrudRepository;
+import repository.SuperRepository;
 
-public interface OrderRepository extends CrudRepository<Order,String> {
+import java.sql.SQLException;
+
+public interface OrderRepository extends SuperRepository {
+    boolean placeOrder(Order order) throws SQLException;
 }

@@ -2,6 +2,7 @@ package repository.custom.impl;
 
 import db.DBConnection;
 import model.Item;
+import model.OrderDetails;
 import repository.custom.ItemRepository;
 import util.CrudUtil;
 
@@ -96,4 +97,21 @@ public class ItemRepositoryImpl implements ItemRepository {
 
         return itemCodeList;
     }
+
+    @Override
+    public boolean updateStock(List<OrderDetails> orderDetailsList) throws SQLException {
+        for(OrderDetails orderDetails : orderDetailsList){
+            boolean isUpdateStock = updateStock(orderDetails);
+            if(!isUpdateStock){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    //Method overloading
+    public boolean updateStock(OrderDetails orderDetails) throws SQLException{
+        return CrudUtil.execute("UPDATE item SET QtyOnHand = QtyOnHand-? WHERE ItemCode = ?",orderDetails.getQtyOnHand(),orderDetails.getItemCode());
+    }
 }
+
