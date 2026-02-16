@@ -16,6 +16,7 @@ import service.custom.ItemService;
 import util.ServiceType;
 
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -57,6 +58,27 @@ public class ItemFormController implements Initializable {
 
     ItemService serviceType = ServiceFactory.getInstance().getServiceType(ServiceType.ITEM);
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        colCode.setCellValueFactory(new PropertyValueFactory<>("code"));
+        colDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
+        colSize.setCellValueFactory(new PropertyValueFactory<>("size"));
+        colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+        colQty.setCellValueFactory(new PropertyValueFactory<>("qtyOnHand"));
+
+        loadTable();
+
+        //Enable select a record from table directly
+        tblItem.getSelectionModel().selectedItemProperty().addListener((observableValue,oldValue,newValue) ->{
+
+            System.out.println(newValue);
+
+            assert newValue !=null;
+            setTextToValues((ItemTM) newValue);
+        });
+    }
+
     @FXML
     void btnAddItemOnAction(ActionEvent event) {
 
@@ -70,24 +92,29 @@ public class ItemFormController implements Initializable {
 
         System.out.println(item);
 
-        boolean isAdded = serviceType.addItem(item);
-
-        if(isAdded){
-            new Alert(Alert.AlertType.INFORMATION,"Item Added").show();
-            loadTable();
-        }
-        else{
-            new Alert(Alert.AlertType.ERROR,"Item Not Added").show();
+        try {
+            if(serviceType.addItem(item)){
+                new Alert(Alert.AlertType.INFORMATION,"Item Added").show();
+                loadTable();
+            }
+            else{
+                new Alert(Alert.AlertType.ERROR,"Item Not Added").show();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     @FXML
     void btnDeleteOnAction(ActionEvent event) {
-        boolean isDeleted = serviceType.deleteItem(txtCode.getText());
 
-        if(isDeleted){
-            new Alert(Alert.AlertType.INFORMATION,"Item Deleted!").show();
-            loadTable();
+        try {
+            if(serviceType.deleteItem(txtCode.getText())){
+                new Alert(Alert.AlertType.INFORMATION,"Item Deleted!").show();
+                loadTable();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -100,18 +127,24 @@ public class ItemFormController implements Initializable {
     @FXML
     void btnSearchOnAction(ActionEvent event) {
 
-        Item item = serviceType.searchById(txtCode.getText());
-        if(item!=null){
-            setTextToValues(item);
-        }
-        else{
-            new Alert(Alert.AlertType.INFORMATION,"No item found.").show();
+        Item item = null;
+        try {
+            item = serviceType.searchById(txtCode.getText());
 
-            txtCode.setText("");
-            txtDescription.setText("");
-            txtSize.setText("");
-            txtPrice.setText("");
-            txtQtyOnHand.setText("");
+            if(item!=null){
+                setTextToValues(item);
+            }
+            else{
+                new Alert(Alert.AlertType.INFORMATION,"No item found.").show();
+
+                txtCode.setText("");
+                txtDescription.setText("");
+                txtSize.setText("");
+                txtPrice.setText("");
+                txtQtyOnHand.setText("");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -147,52 +180,40 @@ public class ItemFormController implements Initializable {
 
         System.out.println(item);
 
-        boolean isUpdated = serviceType.updateItem(item);
-
-        if(isUpdated){
-            new Alert(Alert.AlertType.INFORMATION,"Item Updated").show();
-            loadTable();
-        }
-        else{
-            new Alert(Alert.AlertType.ERROR,"Item Not Updated").show();
+        try {
+            if(serviceType.updateItem(item)){
+                new Alert(Alert.AlertType.INFORMATION,"Item Updated").show();
+                loadTable();
+            }
+            else{
+                new Alert(Alert.AlertType.ERROR,"Item Not Updated").show();
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
     public void loadTable(){
 
-        List<Item> all = serviceType.getAll();
+        List<Item> all = null;
+        try {
+            all = serviceType.getAll();
 
-        ArrayList<ItemTM> itemTMArrayList = new ArrayList<>();
-        all.forEach(item -> {
-            itemTMArrayList.add(new ItemTM(
-                    item.getCode(),
-                    item.getDescription(),
-                    item.getSize(),
-                    item.getPrice(),
-                    item.getQtyOnHand()
-            ));
-        });
-        tblItem.setItems(FXCollections.observableArrayList(itemTMArrayList));
+            ArrayList<ItemTM> itemTMArrayList = new ArrayList<>();
+            all.forEach(item -> {
+                itemTMArrayList.add(new ItemTM(
+                        item.getCode(),
+                        item.getDescription(),
+                        item.getSize(),
+                        item.getPrice(),
+                        item.getQtyOnHand()
+                ));
+            });
+            tblItem.setItems(FXCollections.observableArrayList(itemTMArrayList));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-
-        colCode.setCellValueFactory(new PropertyValueFactory<>("code"));
-        colDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
-        colSize.setCellValueFactory(new PropertyValueFactory<>("size"));
-        colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
-        colQty.setCellValueFactory(new PropertyValueFactory<>("qtyOnHand"));
-
-        loadTable();
-
-        //Enable select a record from table directly
-        tblItem.getSelectionModel().selectedItemProperty().addListener((observableValue,oldValue,newValue) ->{
-
-            System.out.println(newValue);
-
-            assert newValue !=null;
-            setTextToValues((ItemTM) newValue);
-        });
-    }
 }

@@ -11,9 +11,7 @@ import java.util.List;
 
 public class CustomerRepositoryImpl implements CustomerRepository {
     @Override
-    public boolean create(Customer customer) {
-        try {
-
+    public boolean create(Customer customer) throws SQLException {
             return CrudUtil.execute("INSERT INTO customer VALUES (?,?,?,?,?,?,?,?,?)",
                 customer.getId(),
                 customer.getTitle(),
@@ -25,48 +23,31 @@ public class CustomerRepositoryImpl implements CustomerRepository {
                 customer.getProvince(),
                 customer.getPostalCode()
                 );
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
     }
 
     @Override
-    public boolean update(Customer customer) {
-        try {
-
-            return CrudUtil.execute("UPDATE customer SET CustTitle=?, CustName=?, DOB=?, salary=?, CustAddress=?, City=?, Province=?, PostalCode=? WHERE CustID= ? ",
-                    customer.getTitle(),
-                    customer.getName(),
-                    customer.getDobValue(),
-                    customer.getSalary(),
-                    customer.getAddress(),
-                    customer.getCity(),
-                    customer.getProvince(),
-                    customer.getPostalCode(),
-                    customer.getId()
-            );
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public boolean update(Customer customer) throws SQLException {
+        return CrudUtil.execute("UPDATE customer SET CustTitle=?, CustName=?, DOB=?, salary=?, CustAddress=?, City=?, Province=?, PostalCode=? WHERE CustID= ? ",
+                customer.getTitle(),
+                customer.getName(),
+                customer.getDobValue(),
+                customer.getSalary(),
+                customer.getAddress(),
+                customer.getCity(),
+                customer.getProvince(),
+                customer.getPostalCode(),
+                customer.getId()
+        );
     }
 
     @Override
-    public boolean deleteById(String id) {
-        try {
-
-            return CrudUtil.execute("DELETE FROM customer WHERE CustID = ?",id);
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public boolean deleteById(String id) throws SQLException {
+        return CrudUtil.execute("DELETE FROM customer WHERE CustID = ?",id);
     }
 
     @Override
-    public Customer getById(String id) {
-        try {
+    public Customer getById(String id) throws SQLException {
+
             ResultSet resultSet = CrudUtil.execute("SELECT * FROM customer WHERE CustID= ? ",id);
             Boolean isExist = resultSet.next();
 
@@ -88,15 +69,11 @@ public class CustomerRepositoryImpl implements CustomerRepository {
                 return customer;
             }
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
         return null;
     }
 
     @Override
-    public List<Customer> getAll() {
-        try {
+    public List<Customer> getAll() throws SQLException {
 
             ResultSet resultSet = CrudUtil.execute("SELECT * FROM Customer");
             ArrayList<Customer> customerList = new ArrayList<>();
@@ -119,8 +96,5 @@ public class CustomerRepositoryImpl implements CustomerRepository {
             }
             return customerList;
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

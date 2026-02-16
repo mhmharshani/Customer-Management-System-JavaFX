@@ -11,106 +11,83 @@ import java.util.List;
 
 public class ItemRepositoryImpl implements ItemRepository {
     @Override
-    public boolean create(Item item) {
-        try {
-
-            return CrudUtil.execute("INSERT INTO item VALUES (?,?,?,?,?)",
-                    item.getCode(),
-                    item.getDescription(),
-                    item.getSize(),
-                    item.getPrice(),
-                    item.getQtyOnHand()
-                    );
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public boolean create(Item item) throws SQLException {
+        return CrudUtil.execute("INSERT INTO item VALUES (?,?,?,?,?)",
+                item.getCode(),
+                item.getDescription(),
+                item.getSize(),
+                item.getPrice(),
+                item.getQtyOnHand()
+        );
     }
 
     @Override
-    public boolean update(Item item) {
-        try {
-
-            return CrudUtil.execute("UPDATE item SET Description=?, PackSize=?, UnitPrice=?, QtyOnHand=? WHERE ItemCode= ? ",
-                    item.getDescription(),
-                    item.getSize(),
-                    item.getPrice(),
-                    item.getQtyOnHand(),
-                    item.getCode()
-                    );
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public boolean update(Item item) throws SQLException {
+        return CrudUtil.execute("UPDATE item SET Description=?, PackSize=?, UnitPrice=?, QtyOnHand=? WHERE ItemCode= ? ",
+                item.getDescription(),
+                item.getSize(),
+                item.getPrice(),
+                item.getQtyOnHand(),
+                item.getCode()
+        );
     }
 
     @Override
-    public boolean deleteById(String id) {
-        try {
-
-            return CrudUtil.execute("DELETE FROM item WHERE ItemCode = ?",id);
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+    public boolean deleteById(String id) throws SQLException {
+        return CrudUtil.execute("DELETE FROM item WHERE ItemCode = ?",id);
     }
 
     @Override
-    public Item getById(String id) {
-        try {
+    public Item getById(String id) throws SQLException {
+        ResultSet resultSet = CrudUtil.execute("SELECT * FROM item WHERE ItemCode= ? ",id);
+        Boolean isExist = resultSet.next();
 
-            ResultSet resultSet = CrudUtil.execute("SELECT * FROM item WHERE ItemCode= ? ",id);
-            Boolean isExist = resultSet.next();
+        if(isExist) {
+            Item item = new Item(
+                    resultSet.getString(1),
+                    resultSet.getString(2),
+                    resultSet.getString(3),
+                    resultSet.getDouble(4),
+                    resultSet.getInt(5)
+            );
 
-            if(isExist) {
-                Item item = new Item(
-                        resultSet.getString(1),
-                        resultSet.getString(2),
-                        resultSet.getString(3),
-                        resultSet.getDouble(4),
-                        resultSet.getInt(5)
-                );
+            //Using setters
+//            Item item2 = new Item();
+//            item2.setCode(resultSet.getString(1));
+//            item2.setDescription(resultSet.getString(2));
+//            item2.setSize(resultSet.getString(3));
+//            item2.setPrice(resultSet.getDouble(4));
 
-                System.out.println(item);
+            System.out.println(item);
 
-                return item;
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return item;
         }
         return null;
     }
 
     @Override
-    public List<Item> getAll() {
-        try {
+    public List<Item> getAll() throws SQLException {
+        ResultSet resultSet = CrudUtil.execute("SELECT * FROM Item");
 
-            ResultSet resultSet = CrudUtil.execute("SELECT * FROM Item");
+        ArrayList<Item> itemList = new ArrayList<>();
 
-            ArrayList<Item> itemList = new ArrayList<>();
+        while(resultSet.next()){
+            itemList.add(
+                    new Item(
+                            resultSet.getString(1),
+                            resultSet.getString(2),
+                            resultSet.getString(3),
+                            resultSet.getDouble(4),
+                            resultSet.getInt(5)
+                    )
+            );
 
-            while(resultSet.next()){
-                itemList.add(
-                        new Item(
-                                resultSet.getString(1),
-                                resultSet.getString(2),
-                                resultSet.getString(3),
-                                resultSet.getDouble(4),
-                                resultSet.getInt(5)
-                        )
-                );
-
-            }
-            return itemList;
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
+        return itemList;
     }
 
     @Override
-    public List<String> getItemCodes() {
+    public List<String> getItemCodes() throws SQLException {
         ArrayList<String> itemCodeList = new ArrayList<>();
 
         List<Item> all = getAll();

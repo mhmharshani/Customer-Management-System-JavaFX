@@ -41,12 +41,12 @@
             <TableColumn fx:id="colTotal" prefWidth="138.0" text="Total" />
          </columns>
       </TableView>
-      <Button layoutX="665.0" layoutY="242.0" mnemonicParsing="false" onAction="#btnAddToCartOnAction" style="-fx-background-color: #1b264f;" text="Add To Cart" textFill="WHITE">
+      <Button layoutX="660.0" layoutY="243.0" mnemonicParsing="false" onAction="#btnAddToCartOnAction" style="-fx-background-color: #1b264f;" text="Add To Cart" textFill="WHITE">
          <font>
             <Font name="System Bold" size="12.0" />
          </font></Button>
-      <TextField fx:id="txtQtyOnHand" layoutX="529.0" layoutY="242.0" prefHeight="25.0" prefWidth="128.0" promptText="Enter qty on hand" />
-      <Button layoutX="666.0" layoutY="518.0" mnemonicParsing="false" style="-fx-background-color: #778da9;" text="Place Order" textFill="WHITE">
+      <TextField fx:id="txtQtyOnHand" layoutX="524.0" layoutY="243.0" prefHeight="25.0" prefWidth="128.0" promptText="Enter qty on hand" />
+      <Button layoutX="661.0" layoutY="518.0" mnemonicParsing="false" style="-fx-background-color: #778da9;" text="Place Order" textFill="WHITE">
          <font>
             <Font name="System Bold" size="12.0" />
          </font></Button>

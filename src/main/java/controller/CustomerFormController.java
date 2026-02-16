@@ -20,6 +20,7 @@ import util.ServiceType;
 
 import java.net.URL;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -81,6 +82,32 @@ public class CustomerFormController implements Initializable {
 
     CustomerService serviceType = ServiceFactory.getInstance().getServiceType(ServiceType.CUSTOMER);
 
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        cmbTitle.setItems(FXCollections.observableArrayList(Arrays.asList("Mr","Miss","Ms")));
+
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        colAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
+        colSalary.setCellValueFactory(new PropertyValueFactory<>("salary"));
+        colCity.setCellValueFactory(new PropertyValueFactory<>("city"));
+        colDob.setCellValueFactory(new PropertyValueFactory<>("dob"));
+        colProvince.setCellValueFactory(new PropertyValueFactory<>("province"));
+        colPostalCode.setCellValueFactory(new PropertyValueFactory<>("postalCode"));
+
+        loadTable();
+
+        //Enable select a record from table directly
+        tblCustomers.getSelectionModel().selectedItemProperty().addListener((observableValue,oldValue,newValue) ->{
+
+            System.out.println("Select record new value : "+newValue);
+
+            assert newValue !=null;
+            setTextToValues((CustomerTM) newValue);
+        });
+
+    }
+
     @FXML
     void btnAddCustomerOnAction(ActionEvent event) {
         String id = txtId.getText();
@@ -96,15 +123,15 @@ public class CustomerFormController implements Initializable {
         Customer customer = new Customer(id,name,title,dobValue,salary,address,city,province,postalCode);
 
         System.out.println(customer);
-
-        Boolean isAdded = serviceType.addCustomer(customer);
-
-        if(isAdded){
-            new Alert(Alert.AlertType.INFORMATION,"Customer Added").show();
-            loadTable();
-        }
-        else{
-            new Alert(Alert.AlertType.ERROR,"Customer Not Added").show();
+        try {
+            if (serviceType.addCustomer(customer)) {
+                new Alert(Alert.AlertType.INFORMATION, "Customer Added").show();
+                loadTable();
+            } else {
+                new Alert(Alert.AlertType.ERROR, "Customer Not Added").show();
+            }
+        }catch(SQLException e){
+            throw new RuntimeException(e);
         }
     }
 
@@ -115,56 +142,70 @@ public class CustomerFormController implements Initializable {
 
     public void loadTable(){
 
-        List<Customer> all = serviceType.getAll();
+        try{
+            List<Customer> all = serviceType.getAll();
 
-        ArrayList<CustomerTM> customerTMArrayList = new ArrayList<>();
-        all.forEach(customer -> {
-            customerTMArrayList.add(new CustomerTM(
-                    customer.getId(),
-                    customer.getTitle(),
-                    customer.getName(),
-                    Date.valueOf(customer.getDobValue()),
-                    customer.getSalary(),
-                    customer.getAddress(),
-                    customer.getCity(),
-                    customer.getProvince(),
-                    customer.getPostalCode()
-            ));
-        });
+            ArrayList<CustomerTM> customerTMArrayList = new ArrayList<>();
+            all.forEach(customer -> {
+                customerTMArrayList.add(new CustomerTM(
+                        customer.getId(),
+                        customer.getTitle(),
+                        customer.getName(),
+                        Date.valueOf(customer.getDobValue()),
+                        customer.getSalary(),
+                        customer.getAddress(),
+                        customer.getCity(),
+                        customer.getProvince(),
+                        customer.getPostalCode()
+                ));
+            });
 
-        ObservableList<CustomerTM> observableList = FXCollections.observableArrayList(customerTMArrayList);
-        tblCustomers.setItems(observableList);
+            ObservableList<CustomerTM> observableList = FXCollections.observableArrayList(customerTMArrayList);
+            tblCustomers.setItems(observableList);
+
+        }catch(SQLException e){
+            throw new RuntimeException(e);
+        }
+
     }
 
     public void btnDeleteOnAction(ActionEvent actionEvent) {
 
-        Boolean isDeleted = serviceType.deleteCustomer(txtId.getText());
-
-        if(isDeleted){
-            new Alert(Alert.AlertType.INFORMATION,"Customer Deleted!").show();
-            loadTable();
-        } else {
-            new Alert(Alert.AlertType.ERROR, "Customer NOT Deleted!").show();
+        try{
+            if(serviceType.deleteCustomer(txtId.getText())){
+                new Alert(Alert.AlertType.INFORMATION,"Customer Deleted!").show();
+                loadTable();
+            } else {
+                new Alert(Alert.AlertType.ERROR, "Customer NOT Deleted!").show();
+            }
+        }catch(SQLException e){
+            throw new RuntimeException(e);
         }
+
+
     }
 
     public void btnSearchOnAction(ActionEvent actionEvent) {
 
-        Customer customer = serviceType.searchCustomerById(txtId.getText());
-        if(customer !=null){
-            setTextToValues(customer);
-        }
-        else{
-            new Alert(Alert.AlertType.INFORMATION,"No customer found.").show();
+        try{
+            Customer customer = serviceType.searchCustomerById(txtId.getText());
+            if(customer !=null){
+                setTextToValues(customer);
+            }
+            else{
+                new Alert(Alert.AlertType.INFORMATION,"No customer found.").show();
 
-            cmbTitle.setValue("");
-            txtName.setText("");
-            dateDob.setValue(null);
-            txtSalary.setText("");
-            txtAddress.setText("");
-            txtCity.setText("");
-            txtProvince.setText("");
-            txtPostalCode.setText("");
+                cmbTitle.setValue("");
+                txtName.setText("");
+                dateDob.setValue(null);
+                txtSalary.setText("");
+                txtAddress.setText("");
+                txtCity.setText("");
+                txtProvince.setText("");
+                txtPostalCode.setText("");
+            }
+        } catch (SQLException e){
+            throw new RuntimeException(e);
         }
 
     }
@@ -199,53 +240,30 @@ public class CustomerFormController implements Initializable {
 
     public void btnUpdateOnAction(ActionEvent actionEvent) {
 
-        String id = txtId.getText();
-        String name = txtName.getText();
-        String title = cmbTitle.getValue().toString();
-        LocalDate dobValue = dateDob.getValue();
-        Double salary = Double.parseDouble(txtSalary.getText());
-        String address = txtAddress.getText();
-        String city = txtCity.getText();
-        String province = txtProvince.getText();
-        String postalCode = txtPostalCode.getText();
+        try{
+            String id = txtId.getText();
+            String name = txtName.getText();
+            String title = cmbTitle.getValue().toString();
+            LocalDate dobValue = dateDob.getValue();
+            Double salary = Double.parseDouble(txtSalary.getText());
+            String address = txtAddress.getText();
+            String city = txtCity.getText();
+            String province = txtProvince.getText();
+            String postalCode = txtPostalCode.getText();
 
-        Customer customer = new Customer(id,name,title,dobValue,salary,address,city,province,postalCode);
+            Customer customer = new Customer(id,name,title,dobValue,salary,address,city,province,postalCode);
 
-        Boolean isUpdated = serviceType.updateCustomer(customer);
-
-        if(isUpdated){
-            new Alert(Alert.AlertType.INFORMATION,"Customer Updated").show();
-            loadTable();
-        }
-        else{
-            new Alert(Alert.AlertType.ERROR,"Customer Not Updated").show();
+            if(serviceType.updateCustomer(customer)){
+                new Alert(Alert.AlertType.INFORMATION,"Customer Updated").show();
+                loadTable();
+            }
+            else{
+                new Alert(Alert.AlertType.ERROR,"Customer Not Updated").show();
+            }
+        }catch (SQLException e){
+            throw new RuntimeException(e);
         }
 
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        cmbTitle.setItems(FXCollections.observableArrayList(Arrays.asList("Mr","Miss","Ms")));
-
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        colAddress.setCellValueFactory(new PropertyValueFactory<>("address"));
-        colSalary.setCellValueFactory(new PropertyValueFactory<>("salary"));
-        colCity.setCellValueFactory(new PropertyValueFactory<>("city"));
-        colDob.setCellValueFactory(new PropertyValueFactory<>("dob"));
-        colProvince.setCellValueFactory(new PropertyValueFactory<>("province"));
-        colPostalCode.setCellValueFactory(new PropertyValueFactory<>("postalCode"));
-
-        loadTable();
-
-        //Enable select a record from table directly
-        tblCustomers.getSelectionModel().selectedItemProperty().addListener((observableValue,oldValue,newValue) ->{
-
-            System.out.println("Select record new value : "+newValue);
-
-            assert newValue !=null;
-            setTextToValues((CustomerTM) newValue);
-        });
-
-    }
 }

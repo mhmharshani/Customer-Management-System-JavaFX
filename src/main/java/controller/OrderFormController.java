@@ -115,32 +115,55 @@ public class OrderFormController implements Initializable {
 
     private void setItemDataToLables(String newValue) {
 
-        Item itemByCode = itemService.getItemByCode(newValue);
 
-        lblDescription.setText(itemByCode.getDescription());
-        lblStock.setText(itemByCode.getQtyOnHand().toString());
-        lblUnitPrice.setText(itemByCode.getPrice().toString());
+        try {
+            Item itemByCode = itemService.getItemByCode(newValue);
+            lblDescription.setText(itemByCode.getDescription());
+            lblStock.setText(itemByCode.getQtyOnHand().toString());
+            lblUnitPrice.setText(itemByCode.getPrice().toString());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private void setCustomerDataToLabels(String id){
-        Customer customer = customerService.searchCustomerById(id);
-        lblName.setText(customer.getName());
-        lblAddress.setText(customer.getAddress());
-        lblCity.setText(customer.getCity());
+
+        try {
+            Customer customer = customerService.searchCustomerById(id);
+            lblName.setText(customer.getName());
+            lblAddress.setText(customer.getAddress());
+            lblCity.setText(customer.getCity());
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private void loadCustomerIDs(){
-        List<String> allCustomerIDs = customerService.getAllCustomerIDs();
-        cmbCustomerIds.setItems(FXCollections.observableArrayList(allCustomerIDs));
+
+        try {
+            List<String> allCustomerIDs = customerService.getAllCustomerIDs();
+            cmbCustomerIds.setItems(FXCollections.observableArrayList(allCustomerIDs));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
     private void loadItemCodes(){
-        List<String> itemCodes = itemService.getItemCodes();
-        cmbItemIds.setItems(FXCollections.observableArrayList(itemCodes));
+        try {
+            List<String> itemCodes = itemService.getItemCodes();
+            cmbItemIds.setItems(FXCollections.observableArrayList(itemCodes));
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 
 
     public void btnAddToCartOnAction(ActionEvent actionEvent) {
+
     }
 }
 
